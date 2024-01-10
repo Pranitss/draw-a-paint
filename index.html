@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painting Game</title>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        canvas {
+            border: 1px solid #000;
+        }
+        button {
+            margin: 5px;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="paintCanvas" width="500" height="500"></canvas>
+    <button onclick="resetCanvas()">Reset</button>
+    <button onclick="changeColor('#FF0000')">Red</button>
+    <button onclick="changeColor('#00FF00')">Green</button>
+    <button onclick="changeColor('#0000FF')">Blue</button>
+    <button onclick="changeBrushSize(5)">Small Brush</button>
+    <button onclick="changeBrushSize(10)">Medium Brush</button>
+    <button onclick="changeBrushSize(15)">Large Brush</button>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('paintCanvas');
+            const context = canvas.getContext('2d');
+            let isPainting = false;
+
+            function startPainting() {
+                isPainting = true;
+            }
+
+            function stopPainting() {
+                isPainting = false;
+                context.beginPath();
+            }
+
+            function draw(event) {
+                if (!isPainting) return;
+
+                context.lineWidth = brushSize;
+                context.lineCap = 'round';
+                context.strokeStyle = currentColor;
+
+                context.lineTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+                context.stroke();
+                context.beginPath();
+                context.moveTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+            }
+
+            function resetCanvas() {
+                context.clearRect(0, 0, canvas.width, canvas.height);
+                isPainting = false;
+                context.beginPath();
+            }
+
+            function changeColor(color) {
+                currentColor = color;
+            }
+
+            function changeBrushSize(size) {
+                brushSize = size;
+            }
+
+            let currentColor = '#000';
+            let brushSize = 5;
+
+            canvas.addEventListener('mousedown', startPainting);
+            canvas.addEventListener('mouseup', stopPainting);
+            canvas.addEventListener('mousemove', draw);
+        });
+    </script>
+</body>
+</html>
